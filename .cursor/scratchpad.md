@@ -55,6 +55,13 @@ Conclusion: `setup.sh` helps (installs deps, runs uv sync, npm ci) but is not su
 
 # Current Status / Progress Tracking
 
+✅ **GIT COMMIT AND PUSH COMPLETED**
+
+- Successfully committed all changes (commit b751d87)
+- Pushed to GitHub repository: https://github.com/ktwu01/Resume-Matcher.git
+- 8 files changed: API LLM support, deployment docs, project documentation
+- Repository is now up to date with all local changes
+
 ✅ **DEPLOYMENT SUCCESSFUL**
 
 - Backend running on http://localhost:8000 with Anthropic API
@@ -125,8 +132,42 @@ Verification checklist:
 - A resume upload triggers LLM calls successfully (no 401/404).
 - Structured JSON responses parse without errors in `JSONWrapper`.
 
-# Project Status Board (API LLM)
-- [ ] Update backend `.env` with OpenAI-like provider settings above
-- [ ] Ensure BASE_URL path is correct (may require `/v1`)
-- [ ] Select a supported `EMBEDDING_MODEL` or alternate provider
-- [ ] Restart backend and verify health and LLM calls
+# Fork Synchronization Plan
+
+**Situation Analysis:**
+- Current fork status: 1 commit ahead, 22 commits behind `srbhr/Resume-Matcher:main`
+- Your commit (b751d87): Contains valuable API LLM support and deployment docs
+- Strategy: Sync with upstream while preserving your contributions
+
+**High-level Sync Task Breakdown:**
+
+1) **Add upstream remote** (if not already added)
+   - Add `srbhr/Resume-Matcher` as upstream remote
+   - Success criteria: `git remote -v` shows upstream URL
+
+2) **Fetch latest upstream changes**
+   - Fetch all branches and commits from upstream
+   - Success criteria: No errors, upstream/main branch available locally
+
+3) **Merge upstream into local main**
+   - Merge upstream/main into your local main branch
+   - Handle any merge conflicts if they occur
+   - Success criteria: Local main contains both your commit and upstream changes
+
+4) **Push synchronized branch to your fork**
+   - Push updated main branch to your GitHub fork
+   - Success criteria: GitHub shows fork is up-to-date with upstream
+
+5) **Verify application still works**
+   - Test that the app still runs correctly after merge
+   - Verify API LLM functionality is preserved
+   - Success criteria: Both dev and production modes work as before
+
+# Project Status Board (Fork Sync)
+- [ ] Add upstream remote repository
+- [ ] Fetch latest changes from upstream
+- [ ] Merge upstream/main into local main branch
+- [ ] Resolve any merge conflicts (if needed)
+- [ ] Push synchronized branch to fork
+- [ ] Test application functionality post-merge
+- [ ] Verify API LLM features still work
