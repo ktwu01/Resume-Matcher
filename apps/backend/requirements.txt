@@ -32,6 +32,9 @@ numpy==2.2.4
 ollama==0.4.7
 onnxruntime==1.21.1
 openai==1.75.0
+llama-index-core==0.12.42
+llama-index-llms-openai-like==0.3.5
+llama-index-embeddings-openai-like==0.2.0
 packaging==25.0
 pdfminer.six==20250327
 protobuf==6.30.2
