@@ -45,8 +45,8 @@ instance/
 .env # Backend specific environment variables
 
 # cursor related files
-.cursor/
-.cursorrules
+# .cursor/
+# .cursorrules
 
 .DS_Store
 
