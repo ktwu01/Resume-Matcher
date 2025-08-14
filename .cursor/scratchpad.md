@@ -1,128 +1,65 @@
 # Background and Motivation
 
-**Project**: AI Resume Refiner (Resume-Matcher fork) - Successfully deployed locally on macOS
-**Status**: ✅ FULLY OPERATIONAL
+**Project**: AI Resume Refiner (Resume-Matcher fork)
+**New Goal**: Deploy the application to a production Ubuntu server.
+**URL**: The application will be accessible at `https://cvmatcher.best`.
+curl ifconfig.me = 34.174.57.253
+**Data Storage**: The SQLite database (`app.db`) will be stored and used on the Ubuntu server.
+**Previous Status**: The application was successfully running in a local development environment on macOS. The focus is now on production deployment.
 
-**Key Accomplishments:**
-- ✅ Backend (FastAPI) running on http://localhost:8000 with Anthropic API
-- ✅ Frontend (Next.js) running on http://localhost:3000
-- ✅ API LLM integration (Anthropic via OpenAI-compatible endpoint)
-- ✅ SQLite database configured and working
-- ✅ Fork synchronized with upstream (23+ commits merged)
-- ✅ Production deployment documentation created
-- ✅ Build and deployment issues resolved
+# Key Challenges and Analysis
 
-# Quick Start Guide
+Deploying the application with a dedicated domain simplifies the process significantly compared to using a subpath.
 
-**Prerequisites** (✅ Verified):
-- Node.js ≥ 18, Python ≥ 3.12, uv package manager
+1.  **DNS Configuration**: The domain `cvmatcher.best` needs to be pointed to the server's public IP address by creating an 'A' record with your domain registrar.
+2.  **Server Environment**: The Ubuntu server must have all necessary dependencies installed: Node.js, Python, `uv`, and a reverse proxy (Nginx is recommended).
+3.  **Reverse Proxy (Virtual Host)**: Nginx will be configured to handle incoming requests for `cvmatcher.best`. It will serve the frontend application and forward API requests (e.g., `/api/*`) to the backend service. It will also be set up to handle SSL/TLS for `https` using Let's Encrypt.
+4.  **Process Management**: The frontend and backend processes need to be managed as services (e.g., using `systemd`) to ensure they run continuously and restart on failure.
+5.  **Environment Variables**: The `NEXT_PUBLIC_API_URL` on the frontend needs to be set to the production API URL, which will simply be `/api` because the reverse proxy will handle the routing on the same domain.
+6.  **CORS**: The FastAPI backend's CORS policy must be updated to accept requests from `https://cvmatcher.best`.
 
-**Environment Setup** (✅ Completed):
-- Backend `.env`: API LLM configuration with Anthropic
-- Frontend `.env`: `NEXT_PUBLIC_API_URL=http://localhost:8000`
+# High-level Task Breakdown
 
-**Development Mode**:
-```bash
-npm run dev
-```
-- Backend: http://localhost:8000 (API docs: /api/docs)
-- Frontend: http://localhost:3000
+Here is the simplified, step-by-step plan for deployment:
 
-**Production Mode**:
-```bash
-npm run build && npm run start
-```
+1.  **DNS Configuration**: Point the `cvmatcher.best` domain to the server's IP address.
+    -   **Action**: Create an 'A' record for `@` and `www` pointing to the server's IP.
+    -   **Success Criteria**: Running `dig cvmatcher.best +short` on any machine returns the server's correct IP address. (This can take some time to propagate).
 
-**Key Features**:
-- Resume analysis and improvement suggestions
-- Job description matching
-- AI-powered content enhancement via Anthropic API
+2.  **Server Preparation**: Install all necessary software on the Ubuntu server.
+    -   **Success Criteria**: `node --version`, `python --version`, `uv --version`, and `nginx -v` run successfully and show recent, compatible versions.
 
-# Current Status / Progress Tracking
+3.  **Code Deployment**: Transfer the application code to the server.
+    -   **Success Criteria**: The project directory is copied to `/var/www/cvmatcher.best`.
 
-## ✅ PROJECT FULLY OPERATIONAL
+4.  **Application Build on Server**: Install dependencies and build the application for production.
+    -   **Success Criteria**: `npm install`, `uv sync`, and `npm run build` execute without errors on the server.
 
-**Latest Achievement**: Fork successfully synchronized with upstream (commit c8b24e6)
+5.  **Application Services Setup**: Configure `systemd` to manage the backend and frontend processes.
+    -   **Success Criteria**: `systemd` service files are created, and the services can be started, stopped, and enabled to run on boot.
 
-**System Status**:
-- 🚀 Backend: http://localhost:8000 (FastAPI + Anthropic API)
-- 🎨 Frontend: http://localhost:3000 (Next.js)
-- 💾 Database: SQLite (app.db) - fully functional
-- 🔗 API Health: `{"message":"pong","database":"reachable"}` ✅
+6.  **Reverse Proxy & SSL Configuration**: Set up Nginx to serve the site over HTTPS.
+    -   **Success Criteria**: Nginx configuration is created for `cvmatcher.best`. Running `certbot --nginx` successfully obtains and installs an SSL certificate. Requests to `https://cvmatcher.best` are correctly served by the frontend, and requests to `/api` are forwarded to the backend.
 
-**Recent Milestones**:
-- ✅ API LLM integration with Anthropic via OpenAI-compatible endpoint
-- ✅ Production build and deployment processes working
-- ✅ Fork synchronized with 23+ upstream commits
-- ✅ All port conflicts and PATH issues resolved
-- ✅ Comprehensive deployment documentation created
+7.  **Final Verification**: Test the live application.
+    -   **Success Criteria**: The application is fully functional at `https://cvmatcher.best`. All features, including resume uploads, work correctly.
 
-# Technical Implementation Notes
+# Project Status Board
+- [ ] DNS Configuration
+- [ ] Server Preparation
+- [ ] Code Deployment
+- [ ] Application Build on Server
+- [ ] Application Services Setup
+- [ ] Reverse Proxy & SSL Configuration
+- [ ] Final Verification
 
-## API Configuration (✅ Working)
-**LLM Provider**: Anthropic via OpenAI-compatible endpoint
-- `LLM_PROVIDER=openai`
-- `LLM_BASE_URL=https://anyrouter.top`
-- `LL_MODEL=claude-3-5-haiku-20241022`
+# Executor's Feedback or Assistance Requests
+*This section will be updated by the Executor during the implementation phase.*
 
-**Database**: SQLite with async support
-- `SYNC_DATABASE_URL=sqlite:///./app.db`
-- `ASYNC_DATABASE_URL=sqlite+aiosqlite:///./app.db`
-
-## Lessons Learned
-- **Environment Setup**: Manual `.env` creation required for this fork
-- **PATH Management**: uv availability handled via `~/.local/bin/env` sourcing
-- **Port Management**: Always check for running processes before switching dev/prod modes
-- **Fork Sync**: GitHub UI "Update branch" + local merge completion works perfectly
-- **API Integration**: OpenAI-compatible providers work seamlessly with existing codebase
-
-## Project Maintenance
-- Fork synchronized with upstream: ✅ Current (commit c8b24e6)
-- Dependencies: ✅ **RESOLVED** - llama_index packages installed and working
-- Documentation: `DEPLOY.md` created for production deployment
-- Testing: ✅ Both dev servers running and responding
-
-# ✅ DEPENDENCY ISSUE RESOLVED
-
-**Problem**: Resume upload was failing with `"No module named 'llama_index'"`
-**Root Cause**: Backend server needed restart after upstream merge with new dependencies
-**Solution Applied**:
-1. ✅ Verified llama-index packages in requirements.txt (lines 35-37)
-2. ✅ Ran `uv sync` to ensure all dependencies current
-3. ✅ Restarted development servers (`npm run dev`)
-4. ✅ Confirmed backend health: `{"message":"pong","database":"reachable"}`
-
-**Current Status**: 
-- 🚀 Backend: http://localhost:8000 (✅ Running)
-- 🎨 Frontend: http://localhost:3000 (✅ Running)
-- 📦 Dependencies: All llama-index packages installed and working
-
-# Vercel Deployment Configuration
-
-**⚠️ IMPORTANT**: This is a **monorepo with both frontend (Next.js) and backend (FastAPI)**. Vercel can only deploy the frontend directly. You have two options:
-
-## Option 1: Frontend-Only Deployment (Recommended for Testing)
-**Vercel Settings:**
-- **Framework Preset**: `Next.js`
-- **Root Directory**: `./apps/frontend`
-- **Build Command**: `npm run build`
-- **Output Directory**: `.next` (automatic)
-- **Install Command**: `npm install`
-
-**Environment Variables Needed:**
-- `NEXT_PUBLIC_API_URL`: Set to your backend URL (e.g., Railway, Render, or another host)
-
-**Limitations**: 
-- Backend must be deployed separately (Railway, Render, DigitalOcean, etc.)
-- Resume upload won't work until backend is also deployed
-
-## Option 2: Full-Stack Deployment (Alternative Platforms)
-**Better Options for Full Monorepo:**
-- **Railway**: Supports both frontend + backend in monorepo
-- **Render**: Can deploy both services from same repo
-- **DigitalOcean App Platform**: Handles monorepos well
-
-## Recommendation
-1. **For quick frontend preview**: Use Vercel with Option 1
-2. **For full functionality**: Use Railway or Render for complete deployment
-3. **Current issue**: Fix the `llama_index` dependency first before any deployment
+# Lessons
+*This section will be updated with any lessons learned during the deployment process.*
+- **NEVER auto commit and push git changes before user approval. Always wait for explicit user permission before executing git commit and push commands.**
+- Include info useful for debugging in the program output.
+- Read the file before you try to edit it.
+- If there are vulnerabilities that appear in the terminal, run npm audit before proceeding
+- Using a dedicated domain is much simpler than deploying to a subpath.
