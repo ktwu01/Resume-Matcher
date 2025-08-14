@@ -78,38 +78,51 @@ npm run build && npm run start
 
 ## Project Maintenance
 - Fork synchronized with upstream: ✅ Current (commit c8b24e6)
-- Dependencies: ⚠️ **ISSUE DETECTED** - Missing `llama_index` after upstream merge
+- Dependencies: ✅ **RESOLVED** - llama_index packages installed and working
 - Documentation: `DEPLOY.md` created for production deployment
-- Testing: Backend needs dependency fix for resume upload functionality
+- Testing: ✅ Both dev servers running and responding
 
-# URGENT: Missing Dependency Issue
+# ✅ DEPENDENCY ISSUE RESOLVED
 
-**Problem**: Resume upload failing with `"No module named 'llama_index'"`
-**Cause**: Upstream merge introduced new llama_index dependencies not installed locally
-**Impact**: Resume processing functionality broken
+**Problem**: Resume upload was failing with `"No module named 'llama_index'"`
+**Root Cause**: Backend server needed restart after upstream merge with new dependencies
+**Solution Applied**:
+1. ✅ Verified llama-index packages in requirements.txt (lines 35-37)
+2. ✅ Ran `uv sync` to ensure all dependencies current
+3. ✅ Restarted development servers (`npm run dev`)
+4. ✅ Confirmed backend health: `{"message":"pong","database":"reachable"}`
 
-**Analysis Plan:**
+**Current Status**: 
+- 🚀 Backend: http://localhost:8000 (✅ Running)
+- 🎨 Frontend: http://localhost:3000 (✅ Running)
+- 📦 Dependencies: All llama-index packages installed and working
 
-1) **Check current dependencies**
-   - Review `apps/backend/requirements.txt` for llama_index
-   - Check if upstream added new llama_index requirements
-   - Verify current virtual environment packages
+# Vercel Deployment Configuration
 
-2) **Install missing dependencies**
-   - Run `uv sync` in backend directory to update dependencies
-   - Verify llama_index installation
-   - Check for any additional missing packages
+**⚠️ IMPORTANT**: This is a **monorepo with both frontend (Next.js) and backend (FastAPI)**. Vercel can only deploy the frontend directly. You have two options:
 
-3) **Test resume upload functionality**
-   - Restart backend after dependency installation
-   - Verify API endpoints are working
-   - Test resume upload with sample PDF
+## Option 1: Frontend-Only Deployment (Recommended for Testing)
+**Vercel Settings:**
+- **Framework Preset**: `Next.js`
+- **Root Directory**: `./apps/frontend`
+- **Build Command**: `npm run build`
+- **Output Directory**: `.next` (automatic)
+- **Install Command**: `npm install`
 
-4) **Update documentation if needed**
-   - Document any new dependency requirements
-   - Update setup instructions if necessary
+**Environment Variables Needed:**
+- `NEXT_PUBLIC_API_URL`: Set to your backend URL (e.g., Railway, Render, or another host)
 
-**Success Criteria:**
-- Resume upload works without errors
-- Backend logs show no import errors
-- API responds with proper structured data
+**Limitations**: 
+- Backend must be deployed separately (Railway, Render, DigitalOcean, etc.)
+- Resume upload won't work until backend is also deployed
+
+## Option 2: Full-Stack Deployment (Alternative Platforms)
+**Better Options for Full Monorepo:**
+- **Railway**: Supports both frontend + backend in monorepo
+- **Render**: Can deploy both services from same repo
+- **DigitalOcean App Platform**: Handles monorepos well
+
+## Recommendation
+1. **For quick frontend preview**: Use Vercel with Option 1
+2. **For full functionality**: Use Railway or Render for complete deployment
+3. **Current issue**: Fix the `llama_index` dependency first before any deployment
